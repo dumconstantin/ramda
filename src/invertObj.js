@@ -34,7 +34,22 @@ module.exports = _curry1(function invertObj(obj) {
 
   while (idx < len) {
     var key = props[idx];
-    out[obj[key]] = key;
+    var value = obj[key];
+
+    if (typeof value === 'object') {
+      // How to handle circular references?
+      value = JSON.stringify(value);
+
+      // Test if this key was used before and add
+      // spaces to ensure uniques. Spaces are ignored
+      // by JSON.parse or when recreating functions
+      // from strings.
+      while (out.hasOwnProperty(value)) {
+        value += ' ';
+      }
+    }
+
+    out[value] = key;
     idx += 1;
   }
   return out;
